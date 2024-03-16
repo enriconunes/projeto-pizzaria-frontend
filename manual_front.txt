@@ -1,0 +1,63 @@
+1. Criar projeto Next.js
+	yarn create next-app nomeProjeto
+	Marcar 'yes' apenas para TypeScript e Tailwind
+
+2. Rodar projeto
+	Dentro do projeto, executar comando
+	yarn dev
+
+3. Apagar arquivos default
+	- ./pages/index.tsx remover tudo dentro do return e todos os imports
+	- ./public/vercel.svg
+	- ./pages/api.tsx
+
+4. Organizar estrutura
+	Criar pasta ./src no root e mover pasta ./pages para dentro dela
+
+5. Ajustar tailwind e globals
+	Ao alterar as pastas anteriores, deve mudar content do tailwind.config
+	de:   "./pages/**/*.{js,ts,jsx,tsx,mdx}"
+	para: "./src/pages/**/*.{js,ts,jsx,tsx,mdx}"
+	apos isso, deixar apenas configs do tailwind no ./globals.css
+	e configuracoes globais do body
+
+----------
+
+Criacao:
+
+1. Criar components para usar nas pages
+2. yarn add react-icons //usar icones
+3. Criar context para compatilhar informações e métodos para todas as pages
+4. importar AuthProvider (criado no context) no _app.tsx e aplicar o context
+
+----------
+
+Configurar API de comunicação com o server:
+
+yarn add axios nookies jwt-decode //bibliotecas para comunicação, cookies e decodificacao do token
+
+yarn add react-toastify //pop-ups
+deve fazer a configuracao correta em ./_app.tsx
+
+criar ./services para configurar e exportar a interface da api
+dentro de ./services criar tambem ./errors para criar um erro que será retornado no middleware da requisição à api caso tenha um erro 401 (nao autorizado)
+
+criar ./utils com as funções de gerenciamento de acesso das rotas privadas. são funcões server side do next.js que executam sempre que uma pagina é recarregada, antes da renderização. por isso, é possivel verificar se o user está logado antes de renderizar uma pagina privada, como a /dashboard.
+
+criar useEffect no context para conferir se existe um token e se ele é valido sempre que recarregar alguma pagina. isso é feito atraves da rota criada no backend '/userDetails' que recebe um token 'Bearer' e retorna os dados do user a partir do token recebido. se o token for inválido, ele é apagado dos cookies e retorna para o index (login) *por conta do ultimo topico.
+
+o metodo de verificacao do context confere sempre se o token é valido quando uma pagina é renderizada (carregada/recarregada). se o token for inválido, ele remove o token do cookie e redireciona para o login. Entretanto, se nao houver um token no cookie, nao acontece nada nas paginas privadas (users deslogados conseguem entrar nas paginas). quem faz o controle das paginas privadas sao os metodos definidos em ./utils, tanto para paginas que so podem ser acessadas por visitantes quanto para paginas de users logados.
+
+outra forma de autenticacao é feita em ./services/api.ts quando definimos o header da api em 
+		headers: {
+            Authorization: `Bearer ${cookies['@nextpizza.token']}`
+        }
+as rotas privadas (backend) foram desenvolvidas com um middleware que verifica se existe um token de autenticacao 'Bearer' para que possam ser acessadas. Esse Bearer é passado atraves do 'Authorization' definido no headers da comunicacao com a api. SE houver um token nos cookies, ele é passado para a rota '''como se fosse um body de uma requisicao do tipo post'''. se nao houver um token no cookie, não é passado o Bearer para a rota.
+
+deve usar getServerSideProps quando precisar buscar dados dinâmicos no servidor durante a renderização da página. util para fazer requisições no servidor antes de renderizar a pagina, como uma listagem de itens da base de dados (usado na pagina ./products).
+
+MODAL
+
+yarn add react-modal
+yarn add @types/react-modal -D
+github.com/reactjs/react-modal#api-documentation

@@ -11,3 +11,7 @@ export default function Document() {
     </Html>
   );
 }
+
+
+// Essa pagina so será renderizada uma unica vez, que vai ser quando o usuario abrir o site.
+// Todas as paginas serão renderizadas dentro do body desta pagina
